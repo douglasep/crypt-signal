@@ -1,0 +1,184 @@
+exchanges:
+    binance:
+        required:
+            enabled: true
+settings:
+    log_level: INFO
+    update_interval: 30
+    enable_charts: true
+    market_pairs:
+        - BTC/BUSD
+        - ETH/BUSD
+        - LINK/BUSD
+        - DOT/BUSD
+        - ADA/BUSD
+        - VIDT/BUSD
+        - LTO/USDT
+        - AGI/BTC
+        - REN/USDT
+        - 1INCH/USDT
+indicators:
+    candle_recognition:
+      - enabled: true
+        alert_enabled: true
+        alert_frequency: always
+        candle_check: 1
+        notification: hot
+        candle_period: 1h
+        hot: 0
+        cold: 0
+        chart: true
+    bollinger:
+        - enabled: true
+          candle_period: 1h
+          alert_enabled: true
+          alert_frequency: once
+          period_count: 20
+          std_dev: 2
+          signal:
+            - low_band
+            - close
+            - up_band
+          hot_label: 'Preço está na Banda de Baixo'
+          cold_label: 'Preço está na Banda de Cima'
+          indicator_label: 'Bollinger Crossing'
+          chart: true
+          mute_cold: false
+    ma_crossover:
+      - enabled: true
+        candle_period: 1h
+        alert_enabled: true
+        alert_frequency: once
+        exponential: true
+        ma_fast: 20
+        ma_slow: 200
+        signal:
+          - open
+          - close
+        hot_label: 'Média Móvel Exponencial 20 Cruzou a 200. Tendência de Alta 1h'
+        cold_label: 'Média Móvel Exponencial 200 Cruzou a 20. Tendência de Baixa 1h'
+        indicator_label: 'EMA 20/200 Cross'
+      - enabled: true
+        candle_period: 1h
+        alert_enabled: true
+        alert_frequency: once
+        exponential: true
+        ma_fast: 20
+        ma_slow: 50
+        signal:
+          - open
+          - close
+        hot_label: 'Média Móvel 20 Cruzou a 50. Tendência de Alta rápida 1h'
+        cold_label: 'Média Móvel 20 Cruzou a 50. Tendência de Baixa rápida 1h'
+        indicator_label: 'EMA 20/50 Cross'
+    macd_cross:
+      - enabled: true
+        candle_period: 1h
+        alert_enabled: true
+        alert_frequency: always
+        signal:
+          - macd
+          - signal
+        hot_label: 'Tendência de Alta está chegando'
+        cold_label: 'Tendência de Baixa está chegando'
+        indicator_label: 'MACD Cross 1h'
+        mute_cold: false
+    rsi:
+        - enabled: true
+          alert_enabled: false
+          alert_frequency: once
+          signal:
+            - rsi
+          hot: 20
+          cold: 80
+          candle_period: 1h
+          period_count: 50
+          mute_cold: true
+    stoch_rsi:
+        - enabled: true
+          alert_enabled: true
+          alert_frequency: once
+          signal:
+            - stoch_rsi
+          hot: 20
+          cold: 80
+          candle_period: 1h
+          period_count: 14
+          mute_cold: true
+    momentum:
+        - enabled: true
+          alert_enabled: false
+          alert_frequency: once
+          signal:
+            - momentum
+          hot: 0
+          cold: 0
+          candle_period: 1d
+          period_count: 10
+        - enabled: true
+          alert_enabled: false
+          alert_frequency: once
+          signal:
+            - momentum
+          hot: 0
+          cold: 0
+          candle_period: 1h
+          period_count: 12
+    obv:
+        - enabled: false
+    mfi:
+        - enabled: true
+          alert_enabled: true
+          alert_frequency: once
+          signal:
+            - mfi
+          hot: 20
+          cold: 80
+          candle_period: 1hm
+          period_count: 14
+    ichimoku:
+        - enabled: false
+
+informants:
+    ohlcv:
+        - enabled: true
+          signal:
+            - high
+            - low
+            - close
+          candle_period: 1h
+          period_count: 14
+        - enabled: true
+          signal:
+            - high
+            - low
+            - close
+          candle_period: 15m
+          period_count: 14
+        - enabled: true
+          signal:
+            - high
+            - low
+            - close
+          candle_period: 5m
+          period_count: 14
+    ema:
+        - enabled: true
+          signal:
+            - ema
+          candle_period: 1d
+          period_count: 10
+        - enabled: true
+          signal:
+            - ema
+          candle_period: 1d
+          period_count: 30
+
+notifiers:
+    telegram:
+        required:
+            token: 1681246752:AAEnuiT1B1F2t2OkSVEyb6opVZFLo0YA80A
+            chat_id: 923351342
+        optional:
+            parse_mode: html
+            template: "[{{analysis.config.candle_period}} / {{analysis.config.period_count}}] {{exchange}}-{{market}}-{{indicator}}-{{indicator_number}} is {{status}}! ({{values}}) Prices: [{{prices}}] {{ '\n' -}}"
